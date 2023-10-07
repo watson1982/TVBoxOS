@@ -2,6 +2,8 @@ package com.github.tvbox.osc.util.js;
 
 import android.text.TextUtils;
 
+import com.github.tvbox.osc.util.StringUtils;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,7 +31,7 @@ public class HtmlParser {
     private static Document pdfa_doc = null;
 
     public static String joinUrl(String parent, String child) {
-        if (parent.isEmpty) {
+        if (StringUtils.isEmpty(parent)) {
             return child;
         }
 
@@ -95,7 +97,7 @@ public class HtmlParser {
     }
 
     public static boolean isIndex(String str) {
-        if (str.isEmpty) {
+        if (StringUtils.isEmpty(str)) {
             return false;
         }
         for (String str2 : new String[]{":eq", ":lt", ":gt", ":first", ":last", "body", "#"}) {
@@ -110,7 +112,7 @@ public class HtmlParser {
     }
 
     public static boolean isUrl(String str) {
-        if (str.isEmpty) {
+        if (StringUtils.isEmpty(str)) {
             return false;
         }
         for (String str2 : new String[]{"url", "src", "href", "-original", "-play"}) {
@@ -189,7 +191,7 @@ public class HtmlParser {
             }
         }
         String result;
-        if (option.isNotEmpty) {
+        if (StringUtils.isNotEmpty(option)) {
             if (option.equals("Text")) {
                 result = ret.text();
             } else if (option.equals("Html")) {
@@ -201,12 +203,12 @@ public class HtmlParser {
                     if (m.find()) {
                         result = m.group(1);
                     }
-                    if (result.isNotEmpty) {
+                    if (StringUtils.isNotEmpty(result)) {
                         // 2023/07/28新增 style取内部链接自动去除首尾单双引号
                         result = result.replaceAll("^['|\"](.*)['|\"]$", "$1");
                     }
                 }
-                if (result.isNotEmpty && add_url.isNotEmpty) {
+                if (StringUtils.isNotEmpty(result) && StringUtils.isNotEmpty(add_url)) {
                     // 需要自动urljoin的属性
                     Matcher m = URLJOIN_ATTR.matcher(option);
                     Matcher n = SPECIAL_URL.matcher(result);

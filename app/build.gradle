@@ -59,7 +59,7 @@ android {
 }
 
 dependencies {
-    api fileTree(dir: "libs", include: ["*.jar', '*.aar"])
+    api fileTree(dir: "libs", include: ['*.jar', '*.aar'])
 
 
     implementation 'org.nanohttpd:nanohttpd:2.3.1'

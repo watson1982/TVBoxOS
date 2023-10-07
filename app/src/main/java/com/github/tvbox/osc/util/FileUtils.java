@@ -483,4 +483,17 @@ public class FileUtils {
         // 如果路径中有点号，并且点号在最后一个斜杠之后，认为有后缀
         return lastDotIndex > lastSlashIndex && lastDotIndex < path.length() - 1;
     }
+
+    public static void cleanDirectory(File dir) {
+        if (!dir.exists()) return;
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) return;
+        for(File one : files) {
+            try {
+                deleteFile(one);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

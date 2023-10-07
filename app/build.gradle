@@ -90,6 +90,7 @@ dependencies {
     implementation project(":player")
     implementation project(":quickjs")
 
+    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.4'
     implementation('org.xwalk:xwalk_shared_library:23.53.589.4') {
         exclude group: 'com.android.support'
     }

@@ -51,6 +51,7 @@ public class GridFragment extends BaseLazyFragment {
     private boolean isLoad = false;
     private boolean isTop = true;
     private View focusedView = null;
+    private String default_sourceKey = null;
     private class GridInfo{
         public String sortID="";
         public TvRecyclerView mGridView;

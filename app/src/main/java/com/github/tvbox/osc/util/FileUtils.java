@@ -141,18 +141,6 @@ public class FileUtils {
                 name = "gbk.js";
             } else if (name.contains("模板.js")) {
                 name = "模板.js";
-            } else if (name.contains("drpy2.min.js")) {
-                name = "drpy2.min.js";
-            } else if (name.contains("drpy.min.js")) {
-                name = "drpy.min.js";
-            } else if (name.contains("alist.min.js")) {
-                name = "alist.min.js";
-            } else if (name.contains("mod.js")) {
-                name = "mod.js";
-            } else if (name.contains("sortName.js")) {
-                name = "sortName.js";
-            } else if (name.contains("live2cms.js")) {
-                name = "live2cms.js";
             } else if (name.contains("cat.js")) {
                 name = "cat.js";
             }

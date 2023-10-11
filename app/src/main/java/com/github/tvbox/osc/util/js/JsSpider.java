@@ -3,7 +3,7 @@ package com.github.tvbox.osc.util.js;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
-import androidx.media3.common.util.UriUtil;
+import com.whl.quickjs.wrapper.UriUtil;
 import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.LOG;

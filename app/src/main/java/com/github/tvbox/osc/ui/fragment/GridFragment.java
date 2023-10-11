@@ -292,7 +292,7 @@ public class GridFragment extends BaseLazyFragment {
         isLoad = false;
         scrollTop();
         toggleFilterColor();
-        sourceViewModel.getList(sortData, page);
+        sourceViewModel.getList(sortData, page, default_sourceKey);
     }
 
     private void toggleFilterColor() {

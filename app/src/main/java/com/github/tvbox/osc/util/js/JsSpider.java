@@ -3,7 +3,7 @@ package com.github.tvbox.osc.util.js;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
-
+import androidx.media3.common.util.UriUtil;
 import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.LOG;
@@ -17,7 +17,7 @@ import com.whl.quickjs.wrapper.JSCallFunction;
 import com.whl.quickjs.wrapper.JSObject;
 import com.whl.quickjs.wrapper.JSUtils;
 import com.whl.quickjs.wrapper.QuickJSContext;
-import com.whl.quickjs.wrapper.UriUtil;
+
 import org.json.JSONArray;
 
 import java.io.ByteArrayInputStream;
@@ -167,6 +167,9 @@ public class JsSpider extends Spider {
                 ctx.execute(byteFF(b), key + ".js","__jsEvalReturn");
                 ctx.evaluate("globalThis." + key + " = __JS_SPIDER__;");
             } else {
+                if (content.contains("__JS_SPIDER__")) {
+                    content = content.replaceAll("__JS_SPIDER__\\s*=", "export default ");
+                }
                 String moduleExtName = "default";
                 if (content.contains("__jsEvalReturn") && !content.contains("export default")) {
                     moduleExtName = "__jsEvalReturn";
@@ -301,7 +304,28 @@ public class JsSpider extends Spider {
         return result;
     }
 
+    
     private Object[] proxy2(Map<String, String> params) throws Exception {
+        String url = params.get("url");
+        String header = params.get("header");
+        JSArray array = submit(() -> new JSUtils<String>().toArray(ctx, Arrays.asList(url.split("/")))).get();
+        Object object = submit(() -> ctx.parse(header)).get();
+        String json = (String) call("proxy", array, object);
+        Res res = Res.objectFrom(json);
+        String contentType = res.getContentType();
+        if (TextUtils.isEmpty(contentType)) contentType = "application/octet-stream";
+        Object[] result = new Object[3];
+        result[0] = 200;
+        result[1] = contentType;
+        if (res.getBuffer() == 2) {
+            result[2] = new ByteArrayInputStream(Base64.decode(res.getContent(), Base64.DEFAULT));
+        } else {
+            result[2] = new ByteArrayInputStream(res.getContent().getBytes());
+        }
+        return result;
+    }
+
+   /* private Object[] proxy2(Map<String, String> params) throws Exception {
         String url = params.get("url");
         String header = params.get("header");
         JSArray array = submit(() -> new JSUtils<String>().toArray(ctx, Arrays.asList(url.split("/")))).get();
@@ -313,7 +337,7 @@ public class JsSpider extends Spider {
         result[1] = "application/octet-stream";
         result[2] = new ByteArrayInputStream(Base64.decode(res.getContent(), Base64.DEFAULT));
         return result;
-    }
+    }*/
 
     private ByteArrayInputStream getStream(Object o) {
         if (o instanceof JSONArray) {

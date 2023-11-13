@@ -601,89 +601,91 @@ public class PlayActivity extends BaseActivity {
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-        sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
-            @Override
-            public void onChanged(JSONObject info) {
-                if (info != null) {
-                    try {
-                        progressKey = info.optString("proKey", null);
-                        boolean parse = info.optString("parse", "1").equals("1");
-                        boolean jx = info.optString("jx", "0").equals("1");
-                        playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
-                        if(playSubtitle.isEmpty() && info.has("subs")) {
-                            try {
-                                JSONObject obj =info.getJSONArray("subs").optJSONObject(0);
-                                String url = obj.optString("url", "");
-                                if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
-                                    String format = obj.optString("format", "");
-                                    String name = obj.optString("name", "字幕");
-                                    String ext = ".srt";
-                                    switch (format) {
-                                        case "text/x-ssa":
-                                            ext = ".ass";
-                                            break;
-                                        case "text/vtt":
-                                            ext = ".vtt";
-                                            break;
-                                        case "application/x-subrip":
-                                            ext = ".srt";
-                                            break;
-                                        case "text/lrc":
-                                            ext = ".lrc";
-                                            break;
-                                    }
-                                    String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                    url += "#" + URLEncoder.encode(filename);
-                                }
-                                playSubtitle = url;
-                            } catch (Throwable th) {
-                            }
-                        }
-                        subtitleCacheKey = info.optString("subtKey", null);
-                        String playUrl = info.optString("playUrl", "");
-                        String msg = info.optString("msg", "");
-                        if(!msg.isEmpty()){
-                            Toast.makeText(PlayActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        }
-                        String flag = info.optString("flag");
-                        String url = info.getString("url");
-                        HashMap<String, String> headers = null;
-                        webUserAgent = null;
-                        webHeaderMap = null;
-                        if (info.has("header")) {
-                            try {
-                                JSONObject hds = new JSONObject(info.getString("header"));
-                                Iterator<String> keys = hds.keys();
-                                while (keys.hasNext()) {
-                                    String key = keys.next();
-                                    if (headers == null) {
-                                        headers = new HashMap<>();
-                                    }
-                                    headers.put(key, hds.getString(key));
-                                    if (key.equalsIgnoreCase("user-agent")) {
-                                        webUserAgent = hds.getString(key).trim();
-                                    }
-                                }
-                                webHeaderMap = headers;
-                            } catch (Throwable th) {
-
-                            }
-                        }
-                        if (parse || jx) {
-                            boolean userJxList = (playUrl.isEmpty() && ApiConfig.get().getVipParseFlags().contains(flag)) || jx;
-                            initParse(flag, userJxList, playUrl, url);
-                        } else {
-                            mController.showParse(false);
-                            playUrl(playUrl + url, headers);
-                        }
-                    } catch (Throwable th) {
-                    }
-                } else {
-                    errorWithRetry("获取播放信息错误", true);
-                }
-            }
-        });
+        sourceViewModel.playResult.observeForever(mObserverPlayResult);
     }
+
+    private final Observer<JSONObject> mObserverPlayResult= new Observer<JSONObject>() {
+        @Override
+        public void onChanged(JSONObject info) {
+            if (info != null) {
+                try {
+                    progressKey = info.optString("proKey", null);
+                    boolean parse = info.optString("parse", "1").equals("1");
+                    boolean jx = info.optString("jx", "0").equals("1");
+                    playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
+                    if(playSubtitle.isEmpty() && info.has("subs")) {
+                        try {
+                            JSONObject obj =info.getJSONArray("subs").optJSONObject(0);
+                            String url = obj.optString("url", "");
+                            if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
+                                String format = obj.optString("format", "");
+                                String name = obj.optString("name", "字幕");
+                                String ext = ".srt";
+                                switch (format) {
+                                    case "text/x-ssa":
+                                        ext = ".ass";
+                                        break;
+                                    case "text/vtt":
+                                        ext = ".vtt";
+                                        break;
+                                    case "application/x-subrip":
+                                        ext = ".srt";
+                                        break;
+                                    case "text/lrc":
+                                        ext = ".lrc";
+                                        break;
+                                }
+                                String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
+                                url += "#" + URLEncoder.encode(filename);
+                            }
+                            playSubtitle = url;
+                        } catch (Throwable th) {
+                        }
+                    }
+                    subtitleCacheKey = info.optString("subtKey", null);
+                    String playUrl = info.optString("playUrl", "");
+                    String msg = info.optString("msg", "");
+                    if(!msg.isEmpty()){
+                        Toast.makeText(PlayActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                    String flag = info.optString("flag");
+                    String url = info.getString("url");
+                    HashMap<String, String> headers = null;
+                    webUserAgent = null;
+                    webHeaderMap = null;
+                    if (info.has("header")) {
+                        try {
+                            JSONObject hds = new JSONObject(info.getString("header"));
+                            Iterator<String> keys = hds.keys();
+                            while (keys.hasNext()) {
+                                String key = keys.next();
+                                if (headers == null) {
+                                    headers = new HashMap<>();
+                                }
+                                headers.put(key, hds.getString(key));
+                                if (key.equalsIgnoreCase("user-agent")) {
+                                    webUserAgent = hds.getString(key).trim();
+                                }
+                            }
+                            webHeaderMap = headers;
+                        } catch (Throwable th) {
+
+                        }
+                    }
+                    if (parse || jx) {
+                        boolean userJxList = (playUrl.isEmpty() && ApiConfig.get().getVipParseFlags().contains(flag)) || jx;
+                        initParse(flag, userJxList, playUrl, url);
+                    } else {
+                        mController.showParse(false);
+                        playUrl(playUrl + url, headers);
+                    }
+                } catch (Throwable th) {
+                }
+            } else {
+                errorWithRetry("获取播放信息错误", true);
+            }
+        }        
+    };
 
     private void initData() {
         Intent intent = getIntent();
@@ -770,6 +772,8 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //手动注销
+        sourceViewModel.playResult.removeObserver(mObserverPlayResult);
         if (mVideoView != null) {
             mVideoView.release();
             mVideoView = null;

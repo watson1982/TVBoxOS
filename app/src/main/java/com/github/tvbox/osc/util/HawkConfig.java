@@ -39,4 +39,9 @@ public class HawkConfig {
     public static final String REMOTE_TVBOX = "remote_tvbox_host";
     public static final String IJK_CACHE_PLAY = "ijk_cache_play";
     public static boolean hotVodDelete;
+    /**
+     * 后台播放模式 0 关闭,1 开启,2 画中画
+     */
+    public static final String BACKGROUND_PLAY_TYPE = "background_play_type";
+    
 }

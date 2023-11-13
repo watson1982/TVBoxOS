@@ -143,7 +143,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             FastClickCheckUtil.check(view);
             SelectDialog<String> dialog = new SelectDialog<>(mActivity);
             dialog.setTip("请选择");
-            dialog.setAdapter(null, new SelectDialogAdapter.SelectDialogInterface<String>() {
+            dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
                 @Override
                 public void click(String value, int pos) {
                     tvBgPlayType.setText(value);

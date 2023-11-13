@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".base.App"
@@ -72,6 +73,11 @@
         <activity
             android:name=".ui.activity.CollectActivity"
             android:screenOrientation="sensorLandscape" />
+            
+        <service
+            android:name=".server.PlayService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
         <receiver android:name=".receiver.SearchReceiver">
             <intent-filter>
@@ -108,5 +114,4 @@
             android:name="xwalk_verify"
             android:value="disable" />
     </application>
-
 </manifest>
